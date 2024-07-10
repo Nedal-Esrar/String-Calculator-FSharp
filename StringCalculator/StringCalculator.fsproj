@@ -5,4 +5,9 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Include="Utils.fs" />
+      <Compile Include="Calculator.fs" />
+    </ItemGroup>
+
 </Project>
