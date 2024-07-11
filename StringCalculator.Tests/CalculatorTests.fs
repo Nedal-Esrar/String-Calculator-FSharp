@@ -65,3 +65,22 @@ let ``Add with negative numbers should throw NegativeFoundException`` (numbers: 
 [<InlineData("8,9,5000", 17)>]
 let ``Add should ignore numbers greater than 1000`` (numbers: string, expected: int) =
   add numbers |> should equal expected
+
+[<Theory>]
+[<InlineData("//[***]\n1***2", 3)>]
+[<InlineData("//[$$]\n1$$5", 6)>]
+let ``Add should handle variable-length delimiters for valid string format`` (numbers: string, expected: int) =
+  add numbers |> should equal expected
+  
+[<Theory>]
+[<InlineData("//[***][$$]\n1***2")>]
+let ``Add with multiple delimiters should throw ArgumentException`` (numbers: string) =
+  (fun () -> add numbers |> ignore) |> should throw typeof<System.ArgumentException>
+  
+[<Theory>]
+[<InlineData("//[***\n1***2")>]
+[<InlineData("//][***]\n1***2")>]
+[<InlineData("//[***]1***2")>]
+[<InlineData("//[***]\n")>]
+let ``Add with invalid variable-length delimiters but invalid string format should throw FormatException`` (numbers: string) =
+  (fun () -> add numbers |> ignore) |> should throw typeof<System.FormatException>
