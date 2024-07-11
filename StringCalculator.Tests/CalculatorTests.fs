@@ -29,3 +29,15 @@ let ``Add should return the expected result when a valid string is passed`` (num
 [<InlineData("1b,2")>]
 let ``Add should throw FormatException when an invalid string is passed`` (numbers : string) =
    (fun () -> Add numbers |> ignore) |> should throw typeof<System.FormatException>
+   
+[<Theory>]
+[<InlineData("//$\n1", 1)>]
+[<InlineData("//%\n2%2", 4)>]
+let ``Add should return the expected results when using custom delimiters`` (numbers : string, expected : int) =
+   Add numbers |> should equal expected
+   
+[<Theory>]
+[<InlineData("//$\n1\n2")>]
+[<InlineData("//%\n2,2")>]
+let ``Add should ignore default delimiters when custom is used (throw FormatException)`` (numbers : string) =
+   (fun () -> Add numbers |> ignore) |> should throw typeof<System.FormatException>
