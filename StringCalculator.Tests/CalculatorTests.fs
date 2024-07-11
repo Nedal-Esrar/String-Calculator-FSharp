@@ -3,6 +3,7 @@ module StringCalculator.Tests.CalculatorTests
 open Xunit
 open FsUnit.Xunit
 open StringCalculator.Calculator
+open StringCalculator.Exceptions
 
 [<Fact>]
 let ``Add should throw NullReferenceException when null is passed`` () =
@@ -49,3 +50,11 @@ let ``Add with invalid format of custom delimiter should throw FormatException``
   let ex = Assert.Throws<System.FormatException>(fun () -> add numbers |> ignore)
   
   ex.Message |> should equal "The input string should be of format \"//[delimiter]\n[numbers]\"."
+  
+[<Theory>]
+[<InlineData("-1,4,-3", "negatives not allowed - -1, -3")>]
+[<InlineData("1,4,-3", "negatives not allowed - -3")>]
+let ``Add with negative numbers should throw NegativeFoundException`` (numbers: string, expectedMessage: string) =
+  let ex = Assert.Throws<NegativeFoundException>(fun () -> add numbers |> ignore)
+  
+  ex.Message |> should equal expectedMessage
