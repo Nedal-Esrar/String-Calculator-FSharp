@@ -2,6 +2,7 @@ module StringCalculator.Calculator
 
 open System
 open StringCalculator.Utils
+open StringCalculator.Exceptions
 
 let private parseDelimiters (numbers: string) : char[] * string =
   if numbers.StartsWith("//") then
@@ -14,6 +15,15 @@ let private parseDelimiters (numbers: string) : char[] * string =
     [| delimiter |], numbers
   else
     [| ','; '\n' |], numbers
+    
+let private checkForNegative (numbers : int[]) : int[] =
+   let negatives = numbers |> Array.filter (fun n -> n < 0)
+   
+   match negatives with
+   | [||] -> numbers
+   | _ ->
+     let concatenatedNegatives = negatives |> Array.map string |> String.concat ", "
+     raise (NegativeFoundException $"negatives not allowed - {concatenatedNegatives}")
 
 let add (numbers: string) : int =
   match numbers with
@@ -21,6 +31,8 @@ let add (numbers: string) : int =
   | "" -> 0
   | _ ->
     let delimiters, numbers = parseDelimiters numbers
+    
     numbers.Split delimiters
     |> Array.map parseInt
+    |> checkForNegative
     |> Array.sum
