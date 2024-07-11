@@ -12,9 +12,7 @@ let Add (numbers : string) : int =
   else
     let defaultDelimiters = [| ',' |]
 
-    let splitNumbers = numbers.Split defaultDelimiters
-
-    match splitNumbers.Length with
-    | 1 -> ParseInt splitNumbers[0]
-    | 2 -> ParseInt splitNumbers[0] + ParseInt splitNumbers[1]
-    | _ -> raise (ArgumentException "The input string has more than 2 parts.")
+    numbers.Split defaultDelimiters
+    |> Array.map ParseInt
+    |> Array.sum
+    
