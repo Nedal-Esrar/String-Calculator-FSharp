@@ -16,6 +16,8 @@ let ``Add should throw NullReferenceException when null is passed`` () =
 [<InlineData("1,3", 4)>]
 [<InlineData("1,2,3,4", 10)>]
 [<InlineData("1,10,20,4", 35)>]
+[<InlineData("1\n10", 11)>]
+[<InlineData("1\n10,20\n4", 35)>]
 let ``Add should return the expected result when a valid string is passed`` (numbers : string, expected : int) =
    Add numbers |> should equal expected
    
