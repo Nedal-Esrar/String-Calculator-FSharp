@@ -5,6 +5,9 @@ open StringCalculator.Utils
 
 let private ParseDelimiters (numbers: string) : char[] * string =
   if numbers.StartsWith("//") then
+    if numbers[3] <> '\n' then
+      raise (FormatException "The input string should be of format \"//[delimiter]\n[numbers]\".")
+
     let delimiter = numbers[2]
     let numbers = numbers.Substring(4)
 
