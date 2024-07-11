@@ -3,18 +3,17 @@ module StringCalculator.Calculator
 open System
 open StringCalculator.Utils
 open StringCalculator.Exceptions
+open StringCalculator.Parsers
 
-let private parseDelimiters (numbers: string) : char[] * string =
+let private parseDelimiters (numbers: string) : string[] * string =
   if numbers.StartsWith("//") then
-    if numbers[3] <> '\n' then
-      raise (FormatException "The input string should be of format \"//[delimiter]\n[numbers]\".")
-
-    let delimiter = numbers[2]
-    let numbers = numbers.Substring(4)
-
-    [| delimiter |], numbers
+    let trimmedNumbers = numbers.Substring(2)
+    
+    let parse = getParser trimmedNumbers
+    
+    parse trimmedNumbers
   else
-    [| ','; '\n' |], numbers
+    [| ","; "\n" |], numbers
 
 let private checkForNegative (numbers: int[]) : int[] =
   let negatives = numbers |> Array.filter (fun n -> n < 0)
@@ -32,7 +31,7 @@ let add (numbers: string) : int =
   | _ ->
     let delimiters, numbers = parseDelimiters numbers
 
-    numbers.Split delimiters
+    numbers.Split(delimiters, StringSplitOptions.None)
     |> Array.map parseInt
     |> checkForNegative
     |> Array.filter (fun n -> n <= 1000)
