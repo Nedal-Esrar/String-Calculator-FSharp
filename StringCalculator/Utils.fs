@@ -2,7 +2,7 @@ module StringCalculator.Utils
 
 open System
 
-let ParseInt (number: string) : int =
+let parseInt (number: string) : int =
   // Cases that are not handled in Int32.Parse, but are required in my case.
   // if the string has leading or trailing whitespace, it will be ignored by
   // Int32.Parse
