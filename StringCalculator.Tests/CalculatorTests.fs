@@ -73,14 +73,19 @@ let ``Add should handle variable-length delimiters for valid string format`` (nu
   add numbers |> should equal expected
   
 [<Theory>]
-[<InlineData("//[***][$$]\n1***2")>]
-let ``Add with multiple delimiters should throw ArgumentException`` (numbers: string) =
-  (fun () -> add numbers |> ignore) |> should throw typeof<System.ArgumentException>
-  
-[<Theory>]
 [<InlineData("//[***\n1***2")>]
 [<InlineData("//][***]\n1***2")>]
 [<InlineData("//[***]1***2")>]
 [<InlineData("//[***]\n")>]
+[<InlineData("//[**][$\n1$2")>]
 let ``Add with invalid variable-length delimiters but invalid string format should throw FormatException`` (numbers: string) =
   (fun () -> add numbers |> ignore) |> should throw typeof<System.FormatException>
+  
+[<Theory>]
+[<InlineData("//[***][$$]\n1***2$$3***5", 11)>]
+[<InlineData("//[**][_]\n1**2_50_60", 113)>]
+[<InlineData("//[*][_]\n1*2_50_6000", 53)>]
+[<InlineData("//[\n][\t]\n1\n4\t2", 7)>]
+[<InlineData("//[\n][\t][\r]\n1\n4\n2", 7)>]
+let ``Add should support multiple variable-length delimiters`` (numbers: string, expected: int) =
+  add numbers |> should equal expected
