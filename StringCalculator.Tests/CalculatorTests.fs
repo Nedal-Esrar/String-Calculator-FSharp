@@ -48,13 +48,20 @@ let ``Add should ignore default delimiters when custom is used (throw FormatExce
 [<InlineData("//$1\n2")>]
 let ``Add with invalid format of custom delimiter should throw FormatException`` (numbers: string) =
   let ex = Assert.Throws<System.FormatException>(fun () -> add numbers |> ignore)
-  
-  ex.Message |> should equal "The input string should be of format \"//[delimiter]\n[numbers]\"."
-  
+
+  ex.Message
+  |> should equal "The input string should be of format \"//[delimiter]\n[numbers]\"."
+
 [<Theory>]
 [<InlineData("-1,4,-3", "negatives not allowed - -1, -3")>]
 [<InlineData("1,4,-3", "negatives not allowed - -3")>]
 let ``Add with negative numbers should throw NegativeFoundException`` (numbers: string, expectedMessage: string) =
   let ex = Assert.Throws<NegativeFoundException>(fun () -> add numbers |> ignore)
-  
+
   ex.Message |> should equal expectedMessage
+  
+[<Theory>]
+[<InlineData("1,1000,1001,2", 1003)>]
+[<InlineData("8,9,5000", 17)>]
+let ``Add should ignore numbers greater than 1000`` (numbers: string, expected: int) =
+  add numbers |> should equal expected
