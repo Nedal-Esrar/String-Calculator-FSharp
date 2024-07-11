@@ -10,7 +10,7 @@ let Add (numbers : string) : int =
   if String.IsNullOrEmpty numbers then
     0
   else
-    let defaultDelimiters = [| ',' |]
+    let defaultDelimiters = [| ','; '\n' |]
 
     numbers.Split defaultDelimiters
     |> Array.map ParseInt
