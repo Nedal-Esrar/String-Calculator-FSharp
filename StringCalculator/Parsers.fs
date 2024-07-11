@@ -27,9 +27,6 @@ let parseWithBrackets (numbers: string) : string[] * string =
       .Substring(1, closingBracketIndex - 1)
       .Split([| "][" |], StringSplitOptions.None)
 
-  if Array.length delimiters > 1 then
-    raise (ArgumentException "1 delimiter is allowed.")
-
   let numbers = numbers.Substring(closingBracketIndex + 2)
 
   delimiters, numbers
