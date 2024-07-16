@@ -1,17 +1,20 @@
 module StringCalculator.Parsers
 
 open System
+open Utils
 
-let parseWithoutBrackets (numbers: string) : string[] * string =
+let parseWithoutBrackets (numbers: string) : Result<string array * string, CustomError> =
   if numbers[1] <> '\n' then
-    raise (FormatException "The input string should be of format \"//[delimiter]\n[numbers]\".")
+    "The input string should be of format \"//[delimiter]\n[numbers]\"."
+    |> InvalidFormat
+    |> Error
+  else
+    let delimiter = numbers[0].ToString()
+    let numbers = numbers.Substring(2)
 
-  let delimiter = numbers[0]
-  let numbers = numbers.Substring(2)
+    Ok([| delimiter |], numbers)
 
-  [| delimiter.ToString() |], numbers
-
-let parseWithBrackets (numbers: string) : string[] * string =
+let parseWithBrackets (numbers: string) : Result<string array * string, CustomError> =
   // opening bracket index is 0
   let closingBracketIndex = numbers.LastIndexOf(']')
 
@@ -20,21 +23,25 @@ let parseWithBrackets (numbers: string) : string[] * string =
     || numbers.Length <= closingBracketIndex + 2
     || numbers[closingBracketIndex + 1] <> '\n'
   then
-    raise (FormatException "The input string should be of format \"//[delimiter]\n[numbers]\".")
+    "The input string should be of format \"//[delimiter]\n[numbers]\"."
+    |> InvalidFormat
+    |> Error
+  else
+    let delimiters =
+      numbers
+        .Substring(1, closingBracketIndex - 1)
+        .Split([| "][" |], StringSplitOptions.None)
 
-  let delimiters =
-    numbers
-      .Substring(1, closingBracketIndex - 1)
-      .Split([| "][" |], StringSplitOptions.None)
+    let numbers = numbers.Substring(closingBracketIndex + 2)
 
-  let numbers = numbers.Substring(closingBracketIndex + 2)
+    Ok(delimiters, numbers)
 
-  delimiters, numbers
-
-let getParser (numbers: string) : string -> string[] * string =
-  if String.IsNullOrWhiteSpace(numbers) then
-    raise (FormatException "The input string should be of format \"//[delimiter]\n[numbers]\".")
-
-  match numbers[0] with
-  | '[' -> parseWithBrackets
-  | _ -> parseWithoutBrackets
+let getParser (numbers: string) : Result<string -> Result<string array * string, CustomError>, CustomError> =
+  if String.IsNullOrWhiteSpace numbers then
+    "The input string should be of format \"//[delimiter]\n[numbers]\"."
+    |> InvalidFormat
+    |> Error
+  else
+    match numbers[0] with
+    | '[' -> Ok parseWithBrackets
+    | _ -> Ok parseWithoutBrackets
