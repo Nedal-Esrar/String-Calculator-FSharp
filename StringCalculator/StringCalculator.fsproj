@@ -6,10 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Exceptions\NegativeFoundException.fs"/>
         <Compile Include="Utils.fs"/>
-        <Compile Include="Parsers.fs" />
+        <Compile Include="Parsers.fs"/>
         <Compile Include="Calculator.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FsToolkit.ErrorHandling" Version="4.15.3" />
     </ItemGroup>
 
 </Project>
